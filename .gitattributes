@@ -1,0 +1,9 @@
+# 将 .h 文件标记为 C，而不是 C++
+*.h linguist-language=C
+
+# 明确指定 stb 头文件为 C
+include/stb_image.h linguist-language=C
+include/stb_image_write.h linguist-language=C
+
+# 将 .c 文件标记为 C
+*.c linguist-language=C
