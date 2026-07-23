@@ -28,7 +28,8 @@ struct timeval my__start, my__end;
 // TODO: safe random
 #define get_random(n) (rand() % n)
 
-#define KMEANS_DEBUG_MODE
+// opea debug mode
+// #define KMEANS_DEBUG_MODE
 #ifdef KMEANS_DEBUG_MODE
     #define DEBUG(...) printf(__VA_ARGS__)
 #else
