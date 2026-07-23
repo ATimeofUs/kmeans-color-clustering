@@ -4,3 +4,7 @@ Running at linux system, you can use the command above to start the process. Mak
 ```
 /nob_build -i [input_picture_path] -c [number of color] -o [output_file.png]
 ```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
