@@ -63,20 +63,13 @@ typedef struct{
 
 #define RGB_TO_CENTER(p) ((RgbCenter){ (double)(p).r, (double)(p).g, (double)(p).b })
 
-
 // 声明防止顺序问题
-static inline double rgb_distant_square(rgb x, RgbCenter y);
 static inline Picture open_picture(char *filename);
 static inline int ker_select(double *dist_list, uint64_t sum_squqre);
 static inline void kmean_calc_dist(Picture pic, RgbCenter* ker_list, double *dist_list, uint64_t *sum_squqre);
 static inline double kmean_update_ker(Picture pic, RgbCenter* ker_list, double * dist_list, RgbCenter* dist_sum_list, int *count_list);
 
-static inline double rgb_distant_square(rgb x, RgbCenter y){
-    double d_r = x.r - y.r;
-    double d_g = x.g - y.g;
-    double d_b = x.b - y.b;
-    return d_r * d_r + d_g * d_g + d_b * d_b;
-}
+#define RGB_DIST_CENTER(x, y) ((x.r - y.r) * (x.r - y.r) + (x.g - y.g) * (x.g - y.g) + (x.b - y.b) * (x.b - y.b))
 
 static inline Picture open_picture(char *filename){
     int x, y, n;
@@ -120,7 +113,7 @@ static inline void kmean_calc_dist(Picture pic, RgbCenter* ker_list, double *dis
     for (int i = 0; i < pic.size; i ++){
         dist_list[i] = KMEAN_MAX_DIST;
         for (int j = 0; j < ker_list_len; j ++){
-            double new_d = rgb_distant_square(pic.g[i], ker_list[j]);
+            double new_d = RGB_DIST_CENTER(pic.g[i], ker_list[j]);
             if (dist_list[i] > new_d){
                 dist_list[i] = new_d;
             }
@@ -145,7 +138,7 @@ static inline double kmean_update_ker(Picture pic, RgbCenter* ker_list, double *
         int target_ker = 0;
         // 1. 找到最近的ker
         for (int j = 0; j < ker_list_len; j ++){
-            double new_d = rgb_distant_square(pic.g[i], ker_list[j]);
+            double new_d = RGB_DIST_CENTER(pic.g[i], ker_list[j]);
             if (dist_list[i] > new_d){
                 dist_list[i] = new_d;
                 target_ker = j;
@@ -248,7 +241,7 @@ static inline uint8_t * generate_kmean_data(Picture pic, RgbCenter* ker_list){
         double dist_i = KMEAN_MAX_DIST;
 
         for (int j = 0; j < ker_list_len; j ++){
-            double new_d = rgb_distant_square(pic.g[i], ker_list[j]);
+            double new_d = RGB_DIST_CENTER(pic.g[i], ker_list[j]);
             if (dist_i > new_d){
                 dist_i = new_d;
                 target_ker = j;
@@ -338,6 +331,5 @@ int main(int argc, char *argv[]){
     stbi_image_free(pic.g);
     array_free(ker_list);
 
-    TIME_END;
     return 0;
 }

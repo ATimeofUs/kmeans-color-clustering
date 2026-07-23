@@ -51,7 +51,5 @@ int main(int argc, char **argv){
         return 1;
     }
 
-    // nob_cmd_free(&cmd);
-    
     return 0;
 }
