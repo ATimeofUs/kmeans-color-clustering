@@ -64,21 +64,20 @@ typedef struct{
 
 
 // 声明防止顺序问题
-double rgb_distant_square(rgb x, RgbCenter y);
-Picture open_picture(char *filename);
-int ker_select(double *dist_list, uint64_t sum_squqre);
-void kmean_calc_dist(Picture pic, RgbCenter* ker_list, double *dist_list, uint64_t *sum_squqre);
-double kmean_update_ker(Picture pic, RgbCenter* ker_list, double * dist_list, RgbCenter* dist_sum_list, int *count_list);
+static inline double rgb_distant_square(rgb x, RgbCenter y);
+static inline Picture open_picture(char *filename);
+static inline int ker_select(double *dist_list, uint64_t sum_squqre);
+static inline void kmean_calc_dist(Picture pic, RgbCenter* ker_list, double *dist_list, uint64_t *sum_squqre);
+static inline double kmean_update_ker(Picture pic, RgbCenter* ker_list, double * dist_list, RgbCenter* dist_sum_list, int *count_list);
 
-
-double rgb_distant_square(rgb x, RgbCenter y){
+static inline double rgb_distant_square(rgb x, RgbCenter y){
     double d_r = x.r - y.r;
     double d_g = x.g - y.g;
     double d_b = x.b - y.b;
     return d_r * d_r + d_g * d_g + d_b * d_b;
 }
 
-Picture open_picture(char *filename){
+static inline Picture open_picture(char *filename){
     int x, y, n;
     unsigned char *data = stbi_load(filename, &x, &y, &n, 0);
 
@@ -103,7 +102,7 @@ Picture open_picture(char *filename){
     return pic;
 }
 
-int ker_select(double *dist_list, uint64_t sum_squqre){
+static inline int ker_select(double *dist_list, uint64_t sum_squqre){
     int r = get_random(sum_squqre);
 
     int dist_list_len = array_len(dist_list);
@@ -115,7 +114,7 @@ int ker_select(double *dist_list, uint64_t sum_squqre){
     return dist_list_len;
 }
 
-void kmean_calc_dist(Picture pic, RgbCenter* ker_list, double *dist_list, uint64_t *sum_squqre){
+static inline void kmean_calc_dist(Picture pic, RgbCenter* ker_list, double *dist_list, uint64_t *sum_squqre){
     int ker_list_len = array_len(ker_list);
     for (int i = 0; i < pic.size; i ++){
         dist_list[i] = KMEAN_MAX_DIST;
@@ -129,7 +128,7 @@ void kmean_calc_dist(Picture pic, RgbCenter* ker_list, double *dist_list, uint64
     }
 }
 
-double kmean_update_ker(Picture pic, RgbCenter* ker_list, double * dist_list, RgbCenter* dist_sum_list, int *count_list){
+static inline double kmean_update_ker(Picture pic, RgbCenter* ker_list, double * dist_list, RgbCenter* dist_sum_list, int *count_list){
 
     memset(count_list, 0, array_size(count_list));
     
@@ -194,7 +193,7 @@ double kmean_update_ker(Picture pic, RgbCenter* ker_list, double * dist_list, Rg
  * returns :
  *  - ker_list
  */
-void kmean_main(Picture pic, RgbCenter* ker_list){
+static inline void kmean_main(Picture pic, RgbCenter* ker_list){
     // 1. 第一个随机选择 = array_len(ker_list);
 
     double * dist_list = array_strict_init(sizeof(double) * pic.size);
@@ -239,7 +238,7 @@ clean:
     DEBUG("kmean_main clean up is over\n");
 }
 
-uint8_t * generate_kmean_data(Picture pic, RgbCenter* ker_list){
+static inline uint8_t * generate_kmean_data(Picture pic, RgbCenter* ker_list){
     uint8_t * res = (uint8_t *)malloc(sizeof(uint8_t) * pic.size * 3);
 
     int ker_list_len = array_len(ker_list);
@@ -264,6 +263,7 @@ uint8_t * generate_kmean_data(Picture pic, RgbCenter* ker_list){
 }
     
 int main(int argc, char *argv[]){
+    TIME_START;
     srand(time(0));
     
     // 参数变量
@@ -337,5 +337,6 @@ int main(int argc, char *argv[]){
     stbi_image_free(pic.g);
     array_free(ker_list);
 
+    TIME_END;
     return 0;
 }
